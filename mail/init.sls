@@ -1,3 +1,7 @@
+include:
+  - postgresql
+
+
 /var/mail/encrypted:
   file.directory:
     - makedirs: True
@@ -6,7 +10,7 @@
 /var/mail/decrypted:
   file.directory:
     - group: mail
-    - mode: 660
+    - mode: 770
     - makedirs: True
 
 
@@ -18,13 +22,6 @@ packages:
       - dovecot-imapd
       - dovecot-pgsql
       - dovecot-lmtpd
-
-
-postgresql:
-  pkg:
-    - installed
-  service.running:
-    - enabled: True
 
 
 mailuser:
@@ -141,3 +138,95 @@ postfix:
       - file: /etc/postfix/pgsql/virtual_mailbox_domains.cf
       - file: /etc/postfix/pgsql/virtual_mailbox_maps.cf
       - file: /etc/postfix/pgsql/virtual_alias_maps.cf
+
+
+/etc/dovecot/dovecot.conf:
+  file.managed:
+    - source: salt://mail/dovecot/dovecot.conf
+    - user: root
+    - group: dovecot
+    - mode: 640
+
+
+/etc/dovecot/dovecot-sql.conf.ext:
+  file.managed:
+    - source: salt://mail/dovecot/dovecot-sql.conf.ext
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+
+
+/etc/dovecot/conf.d:
+  file.directory:
+    - user: root
+    - group: dovecot
+    - mode: 550
+    - makedirs: True
+
+
+/etc/dovecot/conf.d/10-auth.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/10-auth.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/10-mail.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/10-mail.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/10-master.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/10-master.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/10-ssl.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/10-ssl.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/auth-sql.conf.ext:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/auth-sql.conf.ext
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+dovecot:
+  service.running:
+    - enabled: True
+    - watch:
+      - file: /etc/dovecot/dovecot.conf
+      - file: /etc/dovecot/dovecot-sql.conf.ext
+    - require:
+      - file: /etc/dovecot/dovecot.conf
+      - file: /etc/dovecot/conf.d/auth-sql.conf.ext
+      - service: postfix
