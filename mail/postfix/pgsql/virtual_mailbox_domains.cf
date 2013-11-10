@@ -1,0 +1,4 @@
+user            = {{ pillar['mail']['dbuser'] }}
+password        = {{ pillar['mail']['dbpass'] }}
+dbname          = {{ pillar['mail']['dbname'] }}
+query           = SELECT 1 FROM virtual_domains WHERE name = '%s'

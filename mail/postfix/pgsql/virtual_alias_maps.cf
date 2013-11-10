@@ -1,0 +1,4 @@
+user            = {{ pillar['mail']['dbuser'] }}
+password        = {{ pillar['mail']['dbpass'] }}
+dbname          = {{ pillar['mail']['dbname'] }}
+query           = SELECT destination FROM virtual_aliases WHERE source='%s'
