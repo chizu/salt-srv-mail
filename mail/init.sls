@@ -55,6 +55,16 @@ mailserver:
       - pkg: postfix
 
 
+/etc/postfix/master.cf:
+  file.managed:
+    - source: salt://mail/postfix/master.cf
+    - user: root
+    - group: postfix
+    - mode: 640
+    - require:
+      - pkg: postfix
+
+
 /etc/postfix/pgsql:
   file.directory:
     - user: postfix
@@ -131,6 +141,7 @@ postfix:
     - enabled: True
     - watch: 
       - file: /etc/postfix/main.cf
+      - file: /etc/postfix/master.cf
     - require:
       - pkg: postfix-pgsql
       - cmd: postfix_database_schema
