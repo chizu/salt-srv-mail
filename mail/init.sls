@@ -10,6 +10,10 @@ include:
     - makedirs: True
 
 
+encfs:
+  pkg.installed
+
+
 /var/mail/decrypted:
   mount.mounted:
     - fstype: fuse
@@ -20,12 +24,18 @@ include:
       - default_permissions
     - require:
       - file: /var/mail/encrypted
+      - pkg: encfs
+  file.directory:
+    - owner: root
+    - group: mail
+    - mode: 775
+    - require:
+      - mount: /var/mail/decrypted
 
 
 packages:
   pkg.installed:
     - pkgs:
-      - encfs
       - dovecot-core
       - dovecot-imapd
       - dovecot-pgsql
@@ -58,7 +68,7 @@ mailserver:
     - source: salt://mail/postfix/main.cf
     - user: root
     - group: postfix
-    - mode: 640
+    - mode: 644
     - require:
       - pkg: postfix
 
@@ -68,7 +78,7 @@ mailserver:
     - source: salt://mail/postfix/master.cf
     - user: root
     - group: postfix
-    - mode: 640
+    - mode: 644
     - require:
       - pkg: postfix
 
@@ -185,11 +195,19 @@ postfix:
     - mode: 550
     - makedirs: True
 
+/var/lib/dovecot:
+  file.directory:
+    - user: root
+    - group: mail
+    - mode: 750
+    - makedirs: True
+
+
 /var/lib/dovecot/sieve:
   file.directory:
     - user: root
-    - group: dovecot
-    - mode: 550
+    - group: mail
+    - mode: 750
     - makedirs: True
 
 
@@ -197,7 +215,7 @@ postfix:
   file.managed:
     - source: salt://mail/dovecot/before.sieve
     - user: root
-    - group: dovecot
+    - group: mail
     - mode: 640
     - require:
       - file: /var/lib/dovecot/sieve
