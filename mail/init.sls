@@ -1,5 +1,6 @@
 include:
   - postgresql
+  - opendkim
 
 
 /var/mail/encrypted:
@@ -143,6 +144,7 @@ postfix:
       - file: /etc/postfix/main.cf
       - file: /etc/postfix/master.cf
     - require:
+      - service: opendkim
       - pkg: postfix-pgsql
       - cmd: postfix_database_schema
       - file: /etc/postfix/main.cf

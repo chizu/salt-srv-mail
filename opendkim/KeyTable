@@ -1,0 +1,2 @@
+{{ pillar['mail']['domain'] }}
+{{ pillar['mail']['domain'] }}:mail:/etc/opendkim/mail.private

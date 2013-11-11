@@ -51,3 +51,7 @@ virtual_transport = lmtp:unix:private/dovecot-lmtp
 virtual_mailbox_domains = pgsql:/etc/postfix/pgsql/virtual_mailbox_domains.cf
 virtual_mailbox_maps = pgsql:/etc/postfix/pgsql/virtual_mailbox_maps.cf
 virtual_alias_maps = pgsql:/etc/postfix/pgsql/virtual_alias_maps.cf
+
+smtpd_milters           = inet:127.0.0.1:8891
+non_smtpd_milters       = $smtpd_milters
+milter_default_action   = accept
