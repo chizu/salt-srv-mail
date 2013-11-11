@@ -1,6 +1,7 @@
 include:
   - postgresql
   - opendkim
+  - dspam
 
 
 /var/mail/encrypted:
@@ -183,6 +184,23 @@ postfix:
     - mode: 550
     - makedirs: True
 
+/var/lib/dovecot/sieve:
+  file.directory:
+    - user: root
+    - group: dovecot
+    - mode: 550
+    - makedirs: True
+
+
+/var/lib/dovecot/sieve/before.sieve:
+  file.managed:
+    - source: salt://mail/dovecot/before.sieve
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /var/lib/dovecot/sieve
+
 
 /etc/dovecot/conf.d/10-auth.conf:
   file.managed:
@@ -221,6 +239,48 @@ postfix:
   file.managed:
     - source: salt://mail/dovecot/conf.d/10-ssl.conf
     - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/20-imap.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/20-imap.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/20-lmtp.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/20-lmtp.conf
+    - template: jinja
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/90-sieve.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/90-sieve.conf
+    - user: root
+    - group: dovecot
+    - mode: 640
+    - require:
+      - file: /etc/dovecot/conf.d
+
+
+/etc/dovecot/conf.d/90-plugin.conf:
+  file.managed:
+    - source: salt://mail/dovecot/conf.d/90-plugin.conf
     - user: root
     - group: dovecot
     - mode: 640
