@@ -9,10 +9,15 @@ include:
 
 
 /var/mail/decrypted:
-  file.directory:
-    - group: mail
-    - mode: 770
-    - makedirs: True
+  mount.mounted:
+    - fstype: fuse
+    - device: encfs#/var/mail/encrypted
+    - mkmnt: True
+    - opts: 
+      - allow_other
+      - default_permissions
+    - require:
+      - file: /var/mail/encrypted
 
 
 packages:
@@ -144,6 +149,7 @@ postfix:
       - file: /etc/postfix/main.cf
       - file: /etc/postfix/master.cf
     - require:
+      - mount: /var/mail/decrypted
       - service: opendkim
       - pkg: postfix-pgsql
       - cmd: postfix_database_schema
@@ -240,6 +246,7 @@ dovecot:
       - file: /etc/dovecot/dovecot.conf
       - file: /etc/dovecot/dovecot-sql.conf.ext
     - require:
+      - mount: /var/mail/decrypted
       - file: /etc/dovecot/dovecot.conf
       - file: /etc/dovecot/conf.d/auth-sql.conf.ext
       - service: postfix
