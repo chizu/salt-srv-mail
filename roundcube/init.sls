@@ -23,3 +23,10 @@ php5-fpm:
 
 php-apc:
   pkg.installed
+
+
+/etc/nginx/sites-enabled/roundcube.conf:
+  file.managed:
+    - source: salt://roundcube/nginx.conf
+    - requires:
+      - pkg: nginx
