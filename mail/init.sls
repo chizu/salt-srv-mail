@@ -2,6 +2,7 @@ include:
   - postgresql
   - opendkim
   - dspam
+  - roundcube
 
 
 /var/mail/encrypted:
