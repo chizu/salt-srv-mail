@@ -33,6 +33,14 @@ VALUES ((SELECT domain_id FROM virtual_domains
         '{{ user.email }}');
 {% endfor %}
 
+{% for source, target in pillar['mail']['aliases'].items() %}
+INSERT INTO virtual_aliases (domain_id, source, destination)
+VALUES ((SELECT domain_id FROM virtual_domains
+         WHERE name='{{ pillar['mail']['domain'] }}'),
+        '{{ source }}',
+        '{{ target }}');
+{% endfor %}
+
 GRANT SELECT ON virtual_domains TO {{ pillar['mail']['dbuser'] }};
 GRANT SELECT ON virtual_users TO {{ pillar['mail']['dbuser'] }};
 GRANT SELECT ON virtual_aliases TO {{ pillar['mail']['dbuser'] }};
