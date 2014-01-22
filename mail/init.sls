@@ -66,6 +66,7 @@ mailserver:
 /etc/postfix/main.cf:
   file.managed:
     - source: salt://mail/postfix/main.cf
+    - template: jinja
     - user: root
     - group: postfix
     - mode: 644

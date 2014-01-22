@@ -37,7 +37,7 @@ smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, rej
 # information on enabling SSL in the smtp client.
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-myhostname = localhost
+myhostname = {{ pillar['mail']['domain'] }}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 mydestination = localhost
